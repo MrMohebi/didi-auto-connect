@@ -1,3 +1,4 @@
+from time import sleep
 import requests
 import hashlib
 
@@ -82,7 +83,7 @@ def stringToOctal(string):
     return result
 
 
-def start():
+def connect():
     pageHtml = ""
     sendDataUrl = ""
     for URL in DIDI_URLS:
@@ -106,8 +107,6 @@ def start():
 
         hashedPassword = hashlib.md5(bytes([int(i, 8) for i in passwordAllOctal.split("\\")[1:]]))
 
-        print(hashedPassword.hexdigest())
-
         result = requests.post(sendDataUrl, {
             'popup': True,
             'dst': "",
@@ -115,12 +114,22 @@ def start():
             "password": hashedPassword.hexdigest()
         })
 
-        print(result.text)
+        if result.text.find("You are logged in") != -1:
+            print("Connected!")
+            return True
 
-    else:
-        print("not connected to wifi")
-        return False
+    return False
+
+
+def checkAndConnect():
+    isConnected = False
+    while True:
+        isConnected = connect()
+        if not isConnected:
+            sleep(5)
+        else:
+            sleep(30)
 
 
 if __name__ == '__main__':
-    start()
+    checkAndConnect()
