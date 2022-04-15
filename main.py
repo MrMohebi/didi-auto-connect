@@ -1,8 +1,6 @@
 import requests
 import hashlib
 
-SEND_DATA_URL = 'http://wifi.didi.ir/login'
-
 DIDI_URLS = [
     "http://wifi.didi.ir/login",
     "http://zne.didi.ir/login",
@@ -86,10 +84,12 @@ def stringToOctal(string):
 
 def start():
     pageHtml = ""
+    sendDataUrl = ""
     for URL in DIDI_URLS:
         try:
             r = requests.get(url=URL)
             pageHtml = r.text
+            sendDataUrl = URL
         except:
             pass
 
@@ -108,7 +108,7 @@ def start():
 
         print(hashedPassword.hexdigest())
 
-        result = requests.post(SEND_DATA_URL, {
+        result = requests.post(sendDataUrl, {
             'popup': True,
             'dst': "",
             "username": USERNAME,
